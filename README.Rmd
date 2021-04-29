@@ -1,13 +1,24 @@
+---
+output: github_document
+---
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>",
+  fig.path = "man/figures/README-",
+  out.width = "100%"
+)
+```
 
 # HOQCenc
 
 <!-- badges: start -->
 <!-- badges: end -->
 
-HOQCenc contains routines for encryption and decryption of character
-strings and text files
+HOQCenc contains routines for encryption and decryption of character strings and text files
 
 ## Installation
 
@@ -17,7 +28,7 @@ You can install this version from GitHub with:
 # install.packages("devtools")
 devtools::install_github("HanOostdijk/HOQCenc",build_vignettes=TRUE) 
 ```
-
+ 
 ## Example
 
 TODO

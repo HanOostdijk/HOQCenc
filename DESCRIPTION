@@ -1,0 +1,21 @@
+Package: HOQCenc
+Title: Encryption routines
+Version: 0.0.0.9000
+Authors@R: 
+    person(given = "Han",
+           family = "Oostdijk",
+           role = c("aut", "cre"),
+           email = "han@hanoostdijk.nl",
+           comment = c(ORCID = "0000-0001-6710-4566"))
+Description: Routines to encrypt and decrypt character strings and text-files.
+License: MIT + file LICENSE
+Encoding: UTF-8
+LazyData: true
+Roxygen: list(markdown = TRUE)
+RoxygenNote: 7.1.1
+Suggests: 
+    testthat
+Imports: 
+    purrr,
+    digest,
+    stringi
