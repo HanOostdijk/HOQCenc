@@ -55,6 +55,13 @@ xcode <- function (tekst, key, dir = 'e', trans = "cfcvp") {
     letters1 <- unique(unlist(strsplit(key, '')))
     letters2 <- c(letters, LETTERS, paste(0:9), ' ', '#')
     letters3 <- c(letters1, setdiff(letters2, letters1))
+    letters4 <- setdiff(letters1, letters2)
+    if (length(letters4) > 0 ) {
+      stop(glue::glue('invalid characters in key: ',
+             glue::glue_collapse(glue::backtick(letters4), sep = ", ") )
+      )
+
+    }
     nummers  <- 1:64
     alf <- match(letters2, letters3)
     alf <- setNames(alf, letters2)

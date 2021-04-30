@@ -18,4 +18,5 @@ Suggests:
 Imports: 
     purrr,
     digest,
-    stringi
+    stringi,
+    glue
