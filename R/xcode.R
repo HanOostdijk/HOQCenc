@@ -6,7 +6,8 @@
 #' @param key Character string with encryption/decryption key.
 #' Only the letters (in upper or lower case), digits, the character `#`
 #' and the space are allowed in this key
-#' @param dir Character (`'e'` or `'d'`) that specifies direction: `'e'` is encrypt, `'d'` is decrypt
+#' @param dir Character (`'e'` or `'d'` or their upper case versions) that specifies direction:
+#'  `'e'` is encrypt, `'d'` is decrypt
 #' @param trans Character string with encrypt/decrypt operations. See **Details**
 #' @return a character string with the encrypted result when `dir == 'e'` or
 #' the decrypted result when `dir == 'd'`
@@ -43,7 +44,10 @@
 #' # [1] "my message!"
 #' }
 
-xcode <- function (tekst, key, dir = 'e', trans = "cfcvp") {
+xcode <- function (tekst, key, dir = c('e','d'), trans = "cfcvp") {
+
+  dir <- tolower(dir)
+  dir <- match.arg(dir)
 
   twobytwo <- function (tekst) {
     tekst <- matrix(unlist(strsplit(tekst, '')), ncol = 2, byrow = T)
@@ -233,7 +237,7 @@ xcode <- function (tekst, key, dir = 'e', trans = "cfcvp") {
     c1 <- tonum[1]
     for (i in seq(1, length(x))) {
       t <- x[i] + c1 * mult
-      if (dir == 't') {
+      if (dir == 'd') {
         c1   <- x[i]
       }
       x[i] <- 1 + ((t - 1) %% 64)

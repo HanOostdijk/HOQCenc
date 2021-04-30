@@ -4,7 +4,7 @@
 \alias{xcode}
 \title{Encrypt or decrypt character string}
 \usage{
-xcode(tekst, key, dir = "e", trans = "cfcvp")
+xcode(tekst, key, dir = c("e", "d"), trans = "cfcvp")
 }
 \arguments{
 \item{tekst}{Character string to encrypt or decrypt}
@@ -13,7 +13,8 @@ xcode(tekst, key, dir = "e", trans = "cfcvp")
 Only the letters (in upper or lower case), digits, the character \verb{#}
 and the space are allowed in this key}
 
-\item{dir}{Character (\code{'e'} or \code{'d'}) that specifies direction: \code{'e'} is encrypt, \code{'d'} is decrypt}
+\item{dir}{Character (\code{'e'} or \code{'d'} or their upper case versions) that specifies direction:
+\code{'e'} is encrypt, \code{'d'} is decrypt}
 
 \item{trans}{Character string with encrypt/decrypt operations. See \strong{Details}}
 }
