@@ -79,6 +79,11 @@ test_that("e operand works fine", {
   x1 <- xcode(y,key,dir='d',trans='')
   expect_identical(x,x1)
 
+  x <- charToRaw("abcdefg") # raw
+  y <- xcode(x,key,dir='e',trans='')
+  x1 <- unlist(xcode(y,key,dir='d',trans=''))
+  expect_identical(x,x1)
+
 })
 
 test_that("check for valid key ", {

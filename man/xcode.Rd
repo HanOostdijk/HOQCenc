@@ -7,7 +7,7 @@
 xcode(tekst, key, dir = c("e", "d"), trans = "cfcvp")
 }
 \arguments{
-\item{tekst}{Character string to encrypt or decrypt}
+\item{tekst}{Character string or raw vector to encrypt or character string to decrypt}
 
 \item{key}{Character string with encryption/decryption key.
 Only the letters (in upper or lower case), digits, the character \verb{#}

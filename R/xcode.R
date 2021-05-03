@@ -2,7 +2,7 @@
 #'
 #'
 #'
-#' @param tekst Character string to encrypt or decrypt
+#' @param tekst Character string or raw vector to encrypt or character string to decrypt
 #' @param key Character string with encryption/decryption key.
 #' Only the letters (in upper or lower case), digits, the character `#`
 #' and the space are allowed in this key
@@ -51,6 +51,12 @@ xcode <- function (tekst, key, dir = c('e','d'), trans = "cfcvp") {
 
   twobytwo <- function (tekst) {
     tekst <- matrix(unlist(strsplit(tekst, '')), ncol = 2, byrow = T)
+    apply(tekst, 1, function(x)
+      paste(x, collapse = ''))
+  }
+
+  threebythree <- function (tekst) {
+    tekst <- matrix(unlist(strsplit(tekst, '')), ncol = 3, byrow = T)
     apply(tekst, 1, function(x)
       paste(x, collapse = ''))
   }
@@ -187,9 +193,14 @@ xcode <- function (tekst, key, dir = c('e','d'), trans = "cfcvp") {
     }
 
     if (dir == 'e') {
-      x <- strsplit(tekst, '')[[1]]
-      x <- purrr::map(x, encode1)
-      x <- paste(x, collapse = '')
+      if (inherits(x,"raw")) {
+        x <- purrr::map_chr(x,~paste('#', format(., '2x'), sep = ''))
+        x <- paste('raw',paste(x,collapse = ''),sep='')
+      } else {
+        x <- strsplit(tekst, '')[[1]]
+        x <- purrr::map(x, encode1)
+        x <- paste(x, collapse = '')
+      }
       n <- nchar(x)
       m <- n %% 16
       if (m > 0) # add filler so that number of characters is multiple of 16
@@ -206,9 +217,14 @@ xcode <- function (tekst, key, dir = c('e','d'), trans = "cfcvp") {
           sep = '')
     } else {
       x <- sub("(#00)+([ ]*)$","",tekst) # remove filler
-      x <- strsplit(x, '#')[[1]]
-      x <- purrr::imap(x, decode1)
-      x <- paste(x, collapse = '')
+      if (substr(x,1,3) == 'raw') {
+        x <- substr(x,4,nchar(x))
+        x <- unlist(purrr::map(threebythree(x),~chci(substr(.,2,3))))
+      } else {
+        x <- strsplit(x, '#')[[1]]
+        x <- purrr::imap(x, decode1)
+        x <- paste(x, collapse = '')
+      }
     }
     x
   }
