@@ -4,11 +4,24 @@
 \alias{enc_file}
 \alias{read_enc_file}
 \alias{write_enc_file}
+\alias{read_enc_binfile}
+\alias{write_enc_binfile}
 \title{Read and write encrypted files}
 \usage{
 read_enc_file(filename, decode = T, key = "My9Key", trans = "cfcvp")
 
 write_enc_file(text, filename, encode = T, key = "My9Key", trans = "cfcvp")
+
+read_enc_binfile(
+  filename,
+  decode = T,
+  key = "My9Key",
+  trans = "cfcvp",
+  bufsize = 2000,
+  raw2char = F
+)
+
+write_enc_binfile(text, filename, encode = T, key = "My9Key", trans = "cfcvp")
 }
 \arguments{
 \item{filename}{a \code{\link[=connection]{connection()}} object or a character string for use in \code{\link[=readLines]{readLines()}} or \code{\link[=writeLines]{writeLines()}}}
@@ -17,11 +30,15 @@ write_enc_file(text, filename, encode = T, key = "My9Key", trans = "cfcvp")
 
 \item{key}{Character string with key for the \code{\link[=xcode]{xcode()}} function}
 
-\item{trans}{Character string with the transformations to be done by the \code{\link[=xcode]{xcode()}} function}
+\item{trans}{Character string with the transformations to be done by the \code{\link[=xcode]{xcode()}} function#'}
 
 \item{text}{Character string that has to be written}
 
 \item{encode}{Logical scalar indicating if encoding should be done (if \code{TRUE})}
+
+\item{bufsize}{Integer indicating the buffersize to be used for \code{read_enc_binfile}}
+
+\item{raw2char}{Logical scalar indicating if \code{rawToChar} conversion should be done in \code{read_enc_binfile}}
 }
 \value{
 Character string with the data read in case of the \code{read_enc_file} function otherwise \code{NULL}.
@@ -30,10 +47,12 @@ Character string with the data read in case of the \code{read_enc_file} function
 Read and write encrypted files
 }
 \examples{
+\dontrun{
 han<- write_enc_file("han",'mycoded.txt')
-read_enc_file('mycoded.txt',decode = F)
+read_enc_file('mycoded.txt',decode = FALSE)
 # [1] "L7Gq 63aiI7x92kx"
-read_enc_file('mycoded.txt',decode = T)
+read_enc_file('mycoded.txt',decode = TRUE)
 # [1] "han"
+}
 
 }

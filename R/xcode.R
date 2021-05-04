@@ -11,6 +11,7 @@
 #' @param trans Character string with encrypt/decrypt operations. See **Details**
 #' @return a character string with the encrypted result when `dir == 'e'` or
 #' the decrypted result when `dir == 'd'`
+#' @importFrom stats setNames
 #' @export
 #' @details Operations in `trans` are sequentially executed in the order given for an encrypt
 #' action and in reversed order for the decrypt action.
@@ -81,9 +82,9 @@ xcode <- function (tekst, key, dir = c('e','d'), trans = "cfcvp") {
 
   init_matrix <- function (key) {
     x = create_matrix(key)
-    assign("key",key,env = parent.frame())
-    assign("tonum",x[[1]],env = parent.frame())
-    assign("toalf",x[[2]],env = parent.frame())
+    assign("key",key,envir= parent.frame())
+    assign("tonum",x[[1]],envir = parent.frame())
+    assign("toalf",x[[2]],envir = parent.frame())
   }
 
   cihc <- function (x) {
@@ -102,7 +103,7 @@ xcode <- function (tekst, key, dir = c('e','d'), trans = "cfcvp") {
   }
 
   aes_proc <- function(tekst,dir = 'e') {
-    key     <- get0('key',env=parent.frame())
+    key     <- get0('key',envir=parent.frame())
     aes_key <- charToRaw(xcode(key,'',trans="") )
     aes <- digest::AES(aes_key, mode="ECB")
     if (dir == 'e') {
@@ -318,4 +319,6 @@ xcode <- function (tekst, key, dir = c('e','d'), trans = "cfcvp") {
   }
   x
 }
+
+utils::globalVariables(c("tonum", "toalf"))
 
