@@ -9,6 +9,8 @@
 #' @param dir Character (`'e'` or `'d'` or their upper case versions) that specifies direction:
 #'  `'e'` is encrypt, `'d'` is decrypt
 #' @param trans Character string with encrypt/decrypt operations. See **Details**
+#' @param noe Logical scalar that when set to `TRUE` will imit the `e` operation. Normally the default value of `FALSE`
+#' should be used. See **Details**
 #' @return a character string with the encrypted result when `dir == 'e'` or
 #' the decrypted result when `dir == 'd'`
 #' @importFrom stats setNames
@@ -19,8 +21,12 @@
 #' These characters must belong to the ordered set of the lower case letters, the
 #' upper case letters, digits, the space and the `#` character. This order is changed by the key:
 #' all (non-duplicated) characters from the key are placed before the other characters.
+#'
 #' To ensure that all characters belong to this ordered set,
-#' an `e` operation is always added (prefixed) to `trans`.
+#' an `e` operation is always added (prefixed) to `trans` unless `noe = TRUE` is used.
+#' *When `noe` is set to `TRUE` the user must ensure that the string to be encrypted
+#' only contains the characters mentioned above and that the number of characters is
+#' a multiple of 2 when the `p` or `s` operation is used and a multiple of 16 when the `a` operation is used.*
 #'
 #' The following operations are defined (we describe only what happens in case of encryption
 #' because for decryption the reversed action is performed):
@@ -32,7 +38,7 @@
 #' - v : a Vigenère translation based on the key: the x-th character is shifted in the ordered set
 #' based on the position of the x-th character in the ordered set.
 #' - c : a Vigenère translation based on the first character of the ordered set for the first character
-#' and from then on base on the result for the preceding character.
+#' and from then on based on the result for the preceding character.
 #' - p : a Playfair translation based on an 8x8 square filled with the ordered set
 #' - a : an AES translation based on the key. This is in fact the [digest::AES()] function with `mode='ECB'`
 #'
@@ -45,7 +51,7 @@
 #' # [1] "my message!"
 #' }
 
-xcode <- function (tekst, key, dir = c('e','d'), trans = "cfcvp") {
+xcode <- function (tekst, key='1VerySecretPasword', dir = c('e','d'), trans = "cfcvp", noe = FALSE) {
 
   dir <- tolower(dir)
   dir <- match.arg(dir)
@@ -82,7 +88,6 @@ xcode <- function (tekst, key, dir = c('e','d'), trans = "cfcvp") {
 
   init_matrix <- function (key) {
     x = create_matrix(key)
-    assign("key",key,envir= parent.frame())
     assign("tonum",x[[1]],envir = parent.frame())
     assign("toalf",x[[2]],envir = parent.frame())
   }
@@ -103,8 +108,8 @@ xcode <- function (tekst, key, dir = c('e','d'), trans = "cfcvp") {
   }
 
   aes_proc <- function(tekst,dir = 'e') {
-    key     <- get0('key',envir=parent.frame())
-    aes_key <- charToRaw(xcode(key,'',trans="") )
+    key     <- paste(toalf[1:16],collapse = '')
+    aes_key <- charToRaw(key)
     aes <- digest::AES(aes_key, mode="ECB")
     if (dir == 'e') {
       tekst <- aes$encrypt(tekst)
@@ -159,6 +164,17 @@ xcode <- function (tekst, key, dir = c('e','d'), trans = "cfcvp") {
       n1  <- 1 + nn * n1r + n1c
       n2  <- 1 + nn * n2r + n2c
       paste(toalf[n1], toalf[n2], sep = '')
+    }
+
+    if ((nchar(tekst) %% 2 ) == 1) {
+      stop('uneven number of characters in `p` operation' )
+    }
+
+    tekst2 <- setdiff(strsplit(tekst,'')[[1]],toalf)
+    if (length(tekst2) > 0) {
+       stop(glue::glue('invalid characters in text of `p` operation: ',
+             glue::glue_collapse(glue::backtick(tekst2), sep = ", ") )
+       )
     }
 
     tekst <- twobytwo(tekst)
@@ -309,7 +325,9 @@ xcode <- function (tekst, key, dir = c('e','d'), trans = "cfcvp") {
 
   init_matrix(key)
 
-  trans = paste("e", trans, sep = "")
+  if (noe == FALSE) {
+    trans = paste("e", trans, sep = "")
+  }
   if (dir != 'e') {
     trans =  stringi::stri_reverse(trans)
   }

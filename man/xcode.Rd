@@ -4,7 +4,13 @@
 \alias{xcode}
 \title{Encrypt or decrypt character string}
 \usage{
-xcode(tekst, key, dir = c("e", "d"), trans = "cfcvp")
+xcode(
+  tekst,
+  key = "1VerySecretPasword",
+  dir = c("e", "d"),
+  trans = "cfcvp",
+  noe = FALSE
+)
 }
 \arguments{
 \item{tekst}{Character string or raw vector to encrypt or character string to decrypt}
@@ -17,6 +23,9 @@ and the space are allowed in this key}
 \code{'e'} is encrypt, \code{'d'} is decrypt}
 
 \item{trans}{Character string with encrypt/decrypt operations. See \strong{Details}}
+
+\item{noe}{Logical scalar that when set to \code{TRUE} will imit the \code{e} operation. Normally the default value of \code{FALSE}
+should be used. See \strong{Details}}
 }
 \value{
 a character string with the encrypted result when \code{dir == 'e'} or
@@ -32,8 +41,12 @@ All operations are working on character strings that contain a multiple of 16 ch
 These characters must belong to the ordered set of the lower case letters, the
 upper case letters, digits, the space and the \verb{#} character. This order is changed by the key:
 all (non-duplicated) characters from the key are placed before the other characters.
+
 To ensure that all characters belong to this ordered set,
-an \code{e} operation is always added (prefixed) to \code{trans}.
+an \code{e} operation is always added (prefixed) to \code{trans} unless \code{noe = TRUE} is used.
+\emph{When \code{noe} is set to \code{TRUE} the user must ensure that the string to be encrypted
+only contains the characters mentioned above and that the number of characters is
+a multiple of 2 when the \code{p} or \code{s} operation is used and a multiple of 16 when the \code{a} operation is used.}
 
 The following operations are defined (we describe only what happens in case of encryption
 because for decryption the reversed action is performed):
@@ -45,7 +58,7 @@ and ensure that the length of the resulting string is a multiple of 16
 \item v : a Vigenère translation based on the key: the x-th character is shifted in the ordered set
 based on the position of the x-th character in the ordered set.
 \item c : a Vigenère translation based on the first character of the ordered set for the first character
-and from then on base on the result for the preceding character.
+and from then on based on the result for the preceding character.
 \item p : a Playfair translation based on an 8x8 square filled with the ordered set
 \item a : an AES translation based on the key. This is in fact the \code{\link[digest:AES]{digest::AES()}} function with \code{mode='ECB'}
 }
