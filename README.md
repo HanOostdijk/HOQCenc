@@ -1,4 +1,17 @@
 
+-   [HOQCenc](#hoqcenc)
+    -   [Installation](#installation)
+    -   [Example](#example)
+    -   [Details](#details)
+        -   [Key and alphabet](#key-and-alphabet)
+        -   [Operations](#operations)
+        -   [The `e` operation](#the-e-operation)
+        -   [The `p` operation](#the-p-operation)
+        -   [The `s` and `f` operations](#the-s-and-f-operations)
+        -   [The `v` operation](#the-v-operation)
+        -   [The `c` operation](#the-c-operation)
+        -   [The `a` operation](#the-a-operation)
+
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 
 # HOQCenc
@@ -9,7 +22,7 @@
 HOQCenc contains routines for encryption and decryption of character
 strings and files. The main function is `xcode` that encrypts an input
 string by executing a number of operations (specified by argument
-`trans`) when argument `dir='e'`. When `dir='d'` is specified decryption
+`trans`) when argument `ed='e'`. When `ed='d'` is specified decryption
 will be done by executing the operations in the reversed order.
 
 ## Installation
@@ -21,9 +34,36 @@ You can install this version from GitHub with:
 devtools::install_github("HanOostdijk/HOQCenc") 
 ```
 
+## Example
+
+In the [Details](#details) section more examples are given and some
+background. In this first example we show:
+
+-   how to encrypt a message
+-   that the result of encryption always is a character string with
+    letters from the [alphabet](#key-and-alphabet)
+-   that by choosing a set of [Operations](#operations) it is possible
+    that small changes in the message lead to big differences in the
+    encrypted text
+-   that (happily) a sequence of encrypting and decrypting returns the
+    original string
+
+``` r
+key <- "1VerySecretKey"
+message1 <- "Line 1 of a two-line message!\nAs expected a second line."
+message2 <- "Line 1 of a two-line message.\nAs expected a second line." 
+
+(s <- xcode(message1,key=key,ed='e',trans='cscvp')) # encrypt message1
+#> [1] "tSCLY5l2X4eM81f8Q7D3 gbmK9#hRSCtD5VC4M9CpH2LxQqGKKl4oHoKqc3dqOOT"
+xcode(s,key=key,ed='d',trans='cscvp')               # show result of encryption
+#> [1] "Line 1 of a two-line message!\nAs expected a second line."
+xcode(message2,key=key,ed='e',trans='cscvp')        # encrypt message2
+#> [1] "iixEWSv881hYenne#d9VnDEMEowLfD1HrwHyAiHK4qzwbwtneecPdwg1k1OioMOT"
+```
+
 ## Details
 
-### The use of a `key` to form an ‘alphabet’
+### Key and alphabet
 
 When we specify `key=''` an ordered set is constructed consisting of the
 lower and upper case letters, the digits 0 till 9 and the space and the
@@ -97,23 +137,24 @@ below
 key <- "1VerySecretKey"
 
 # small differences in text lead to similar outcomes with simple trans
-xcode("abcdefghijklmnopqrstuwvxyz",key=key,dir='e',trans='p')
+xcode("abcdefghijklmnopqrstuwvxyz",key=key,ed='e',trans='p')
 #> [1] "bdrhybhiKqlmnopqmtB1vxwzSx9339  "
-xcode("1bcdefghijklmnopqrstuwvxyz",key=key,dir='e',trans='p')
+xcode("1bcdefghijklmnopqrstuwvxyz",key=key,ed='e',trans='p')
 #> [1] "eKrhybhiKqlmnopqmtB1vxwzSx9339  "
-xcode("abcdefghijklmnopqrstuwvxy1",key=key,dir='e',trans='p')
+xcode("abcdefghijklmnopqrstuwvxy1",key=key,ed='e',trans='p')
 #> [1] "bdrhybhiKqlmnopqmtB1vxwzSV9339  "
-xcode("ABabcdefghijklmnopqrstuwvxy1",key=key,dir='e',trans='p')
+xcode("ABabcdefghijklmnopqrstuwvxy1",key=key,ed='e',trans='p')
 #> [1] "BsbdrhybhiKqlmnopqmtB1vxwzSV9329"
+
 # small differences in text lead to unrelated outcomes with complex trans
-xcode("abcdefghijklmnopqrstuwvxyz",key=key,dir='e',trans='cfcvp')
-#> [1] "UGmaykvhY5Q63I7qqJbXGW9QQnAK1Mgs"
-xcode("1bcdefghijklmnopqrstuwvxyz",key=key,dir='e',trans='cfcvp')
-#> [1] "Rd3IpxvtDEVqaW710 p3IPHhmYEo6x05"
-xcode("abcdefghijklmnopqrstuwvxy1",key=key,dir='e',trans='cfcvp')
-#> [1] "pJ#l2Cq7C2v3PwUffx#JkRXEEadS0A6o"
-xcode("ABabcdefghijklmnopqrstuwvxy1",key=key,dir='e',trans='cfcvp')
-#> [1] "WaIpZCdlrkmroEG1pXUUtLpIyqyRiwOk"
+xcode("abcdefghijklmnopqrstuwvxyz",key=key,ed='e',trans='cscvp')
+#> [1] "DiQFluQYGgAia1Rck6#8ztKqOFCQupSH"
+xcode("1bcdefghijklmnopqrstuwvxyz",key=key,ed='e',trans='cscvp')
+#> [1] "B2k1QQQRlZ6GwdAT#kqrJ6K1VXZNwVH "
+xcode("abcdefghijklmnopqrstuwvxy1",key=key,ed='e',trans='cscvp')
+#> [1] "GTdRmtkyUuNwof6lzcieMmxz3TojYC6v"
+xcode("ABabcdefghijklmnopqrstuwvxy1",key=key,ed='e',trans='cscvp')
+#> [1] "7nCbDxf2eZMDNr Ywl9bqqJ4Mi2GkXdk"
 ```
 
 ### The `e` operation
@@ -138,16 +179,16 @@ prefixed to the list of operations that is specified in the `trans`
 argument.
 
 ``` r
-xcode('Deze #!',key='',dir='e',trans='')
+xcode('Deze #!',key='',ed='e',trans='')
 #> [1] "Deze #23#21#00  "
 ```
 
 ``` r
-xcode('example!',key='',dir='e',trans='')
+xcode('example!',key='',ed='e',trans='')
 #> [1] "example#21#00#00"
-xcode('example!',key='',dir='e',trans='p')
+xcode('example!',key='',ed='e',trans='p')
 #> [1] "hueiimh832833899"
-xcode('example!',key='',dir='e',trans='a')
+xcode('example!',key='',ed='e',trans='a')
 #> [1] "f8028741438cf02b46c7c993804538ef"
 ```
 
@@ -155,14 +196,14 @@ Only when the `noe` argument is explicitly set to `TRUE` this is not
 done.
 
 ``` r
-xcode('example!',key='',dir='e',trans='',noe=T)
+xcode('example!',key='',ed='e',trans='',noe=T)
 #> [1] "example!"
-xcode('example!',key='',dir='e',trans='p',noe=T)
-#> Error in playfair(tekst, dir): invalid characters in text of `p` operation: `!`
-xcode('example ',key='',dir='e',trans='p',noe=T) # but with space instead of !
+xcode('example!',key='',ed='e',trans='p',noe=T)
+#> Error in playfair(text, ed): invalid characters in text of `p` operation: `!`
+xcode('example ',key='',ed='e',trans='p',noe=T) # but with space instead of !
 #> [1] "hueiimg8"
-xcode('example ',key='',dir='e',trans='a',noe=T)
-#> Error in aes$encrypt(tekst): Text length must be a multiple of 16 bytes
+xcode('example ',key='',ed='e',trans='a',noe=T)
+#> Error in aes$encrypt(text): Text length must be a multiple of 16 bytes
 ```
 
 ### The `p` operation
@@ -194,9 +235,9 @@ level makes little sense because the method works on pairs of
 characters.
 
 ``` r
-xcode('example ',key='',dir='e',trans='p',noe=T)
+xcode('example ',key='',ed='e',trans='p',noe=T)
 #> [1] "hueiimg8"
-xcode("hueiimg8",key='',dir='d',trans='p',noe=T)
+xcode("hueiimg8",key='',ed='d',trans='p',noe=T)
 #> [1] "example "
 ```
 
@@ -208,9 +249,9 @@ operations (flip) flips the characters in such a way that
 `0123456789abcdef` is translated to `fedcba9876543210`.
 
 ``` r
-xcode('0123456789abcdef',key='',dir='e',trans='s',noe=T)
+xcode('0123456789abcdef',key='',ed='e',trans='s',noe=T)
 #> [1] "0f2d4b6987a5c3e1"
-xcode('0123456789abcdef',key='',dir='e',trans='f',noe=T)
+xcode('0123456789abcdef',key='',ed='e',trans='f',noe=T)
 #> [1] "fedcba9876543210"
 ```
 
@@ -225,9 +266,9 @@ are 4, 5 etc. resulting in ‘4’, ‘6’ etc. In the second example the
 ‘b’ etc. are 1, 2 etc. resulting in ‘1’, ‘3’ etc.
 
 ``` r
-xcode('0123456789abcdef',key='ABC',dir='e',trans='v',noe=T)
+xcode('0123456789abcdef',key='ABC',ed='e',trans='v',noe=T)
 #> [1] "468 ACbdfhoqsuwy"
-xcode('0123456789abcdef',key='abc',dir='e',trans='v',noe=T)
+xcode('0123456789abcdef',key='abc',ed='e',trans='v',noe=T)
 #> [1] "13579#bdfhlnprtv"
 ```
 
@@ -247,7 +288,7 @@ tried by brute force and this is very easy. So this method should never
 be used on its own.
 
 ``` r
-xcode('0123456789abcdef',key='abc',dir='e',trans='c',noe=T)
+xcode('0123456789abcdef',key='abc',ed='e',trans='c',noe=T)
 #> [1] "1RIAtnieb#acfjou"
 ```
 
@@ -261,13 +302,13 @@ identically encryped. So also this method should never be used on its
 own.
 
 ``` r
-xcode('0123456789abcdef',key='abc',dir='e',trans='a',noe=T)
+xcode('0123456789abcdef',key='abc',ed='e',trans='a',noe=T)
 #> [1] "747f22502381a3fb7eb0cb42cb5f6612"
-xcode('1123456789abcdef',key='abc',dir='e',trans='a',noe=T)
+xcode('1123456789abcdef',key='abc',ed='e',trans='a',noe=T)
 #> [1] "85762ea7ba16b3a881fc3144898bcdec"
-xcode('0123456789abcdee',key='abc',dir='e',trans='a',noe=T)
+xcode('0123456789abcdee',key='abc',ed='e',trans='a',noe=T)
 #> [1] "4ada7b6fcbeb0f93d9fdb0d731074152"
 
-xcode('0123456789abcdef0123456789abcdef',key='abc',dir='e',trans='a',noe=T)
+xcode('0123456789abcdef0123456789abcdef',key='abc',ed='e',trans='a',noe=T)
 #> [1] "747f22502381a3fb7eb0cb42cb5f6612747f22502381a3fb7eb0cb42cb5f6612"
 ```

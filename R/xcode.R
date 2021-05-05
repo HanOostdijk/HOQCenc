@@ -2,17 +2,17 @@
 #'
 #'
 #'
-#' @param tekst Character string or raw vector to encrypt or character string to decrypt
+#' @param text Character string or raw vector to encrypt or character string to decrypt
 #' @param key Character string with encryption/decryption key.
 #' Only the letters (in upper or lower case), digits, the character `#`
 #' and the space are allowed in this key
-#' @param dir Character (`'e'` or `'d'` or their upper case versions) that specifies direction:
+#' @param ed Character (`'e'` or `'d'` or their upper case versions) that specifies what to do:
 #'  `'e'` is encrypt, `'d'` is decrypt
 #' @param trans Character string with encrypt/decrypt operations. See **Details**
 #' @param noe Logical scalar that when set to `TRUE` will imit the `e` operation. Normally the default value of `FALSE`
 #' should be used. See **Details**
-#' @return a character string with the encrypted result when `dir == 'e'` or
-#' the decrypted result when `dir == 'd'`
+#' @return a character string with the encrypted result when `ed == 'e'` or
+#' the decrypted result when `ed == 'd'`
 #' @importFrom stats setNames
 #' @export
 #' @details Operations in `trans` are sequentially executed in the order given for an encrypt
@@ -45,26 +45,26 @@
 #' @examples
 #' \dontrun{
 #' my_key <- 'Mysecret123'
-#' (s <- xcode('my message!',my_key,dir='e'))
+#' (s <- xcode('my message!',my_key,ed='e'))
 #' # [1] "8Ge8D3F4Mh1s6q z"
-#' xcode(s,my_key,dir='d')
+#' xcode(s,my_key,ed='d')
 #' # [1] "my message!"
 #' }
 
-xcode <- function (tekst, key='1VerySecretPasword', dir = c('e','d'), trans = "cfcvp", noe = FALSE) {
+xcode <- function (text, key='1VerySecretPasword', ed = c('e','d'), trans = "cfcvp", noe = FALSE) {
 
-  dir <- tolower(dir)
-  dir <- match.arg(dir)
+  ed <- tolower(ed)
+  ed <- match.arg(ed)
 
-  twobytwo <- function (tekst) {
-    tekst <- matrix(unlist(strsplit(tekst, '')), ncol = 2, byrow = T)
-    apply(tekst, 1, function(x)
+  twobytwo <- function (text) {
+    text <- matrix(unlist(strsplit(text, '')), ncol = 2, byrow = T)
+    apply(text, 1, function(x)
       paste(x, collapse = ''))
   }
 
-  threebythree <- function (tekst) {
-    tekst <- matrix(unlist(strsplit(tekst, '')), ncol = 3, byrow = T)
-    apply(tekst, 1, function(x)
+  threebythree <- function (text) {
+    text <- matrix(unlist(strsplit(text, '')), ncol = 3, byrow = T)
+    apply(text, 1, function(x)
       paste(x, collapse = ''))
   }
 
@@ -107,24 +107,24 @@ xcode <- function (tekst, key='1VerySecretPasword', dir = c('e','d'), trans = "c
      as.raw(x)
   }
 
-  aes_proc <- function(tekst,dir = 'e') {
+  aes_proc <- function(text,ed = 'e') {
     key     <- paste(toalf[1:16],collapse = '')
     aes_key <- charToRaw(key)
     aes <- digest::AES(aes_key, mode="ECB")
-    if (dir == 'e') {
-      tekst <- aes$encrypt(tekst)
-      tekst <- paste(purrr::map_chr(
-                   strtoi(tekst, 16L), cihc) ,
+    if (ed == 'e') {
+      text <- aes$encrypt(text)
+      text <- paste(purrr::map_chr(
+                   strtoi(text, 16L), cihc) ,
             collapse = "")
     } else {
-      tekst <- aes$decrypt(chci(tekst))
+      text <- aes$decrypt(chci(text))
     }
-   tekst
+   text
   }
 
-  playfair <- function (tekst, dir = 'e') {
-    playfair_pair <- function(c1c2, tonum, toalf, dir = c('e', 'd')) {
-      if (dir == 'e') {
+  playfair <- function (text, ed = 'e') {
+    playfair_pair <- function(c1c2, tonum, toalf, ed = c('e', 'd')) {
+      if (ed == 'e') {
         add = 1
       } else {
         add = -1
@@ -166,24 +166,24 @@ xcode <- function (tekst, key='1VerySecretPasword', dir = c('e','d'), trans = "c
       paste(toalf[n1], toalf[n2], sep = '')
     }
 
-    if ((nchar(tekst) %% 2 ) == 1) {
+    if ((nchar(text) %% 2 ) == 1) {
       stop('uneven number of characters in `p` operation' )
     }
 
-    tekst2 <- setdiff(strsplit(tekst,'')[[1]],toalf)
+    tekst2 <- setdiff(strsplit(text,'')[[1]],toalf)
     if (length(tekst2) > 0) {
        stop(glue::glue('invalid characters in text of `p` operation: ',
              glue::glue_collapse(glue::backtick(tekst2), sep = ", ") )
        )
     }
 
-    tekst <- twobytwo(tekst)
-    tekst <- purrr::map_chr(tekst,  ~ playfair_pair(., tonum, toalf, dir))
-    tekst <- paste(tekst, collapse = '')
-    tekst
+    text <- twobytwo(text)
+    text <- purrr::map_chr(text,  ~ playfair_pair(., tonum, toalf, ed))
+    text <- paste(text, collapse = '')
+    text
   }
 
-  endecode <- function (tekst, dir = 'e') {
+  endecode <- function (text, ed = 'e') {
     encode1 <- function(x) {
       y = charToRaw(x)
       if ((y == 32) ||           # space
@@ -209,12 +209,12 @@ xcode <- function (tekst, key='1VerySecretPasword', dir = c('e','d'), trans = "c
       z
     }
 
-    if (dir == 'e') {
+    if (ed == 'e') {
       if (inherits(x,"raw")) {
         x <- purrr::map_chr(x,~paste('#', format(., '2x'), sep = ''))
         x <- paste('raw',paste(x,collapse = ''),sep='')
       } else {
-        x <- strsplit(tekst, '')[[1]]
+        x <- strsplit(text, '')[[1]]
         x <- purrr::map(x, encode1)
         x <- paste(x, collapse = '')
       }
@@ -233,7 +233,7 @@ xcode <- function (tekst, key='1VerySecretPasword', dir = c('e','d'), trans = "c
           paste(rep(" ",r),collapse = ''),
           sep = '')
     } else {
-      x <- sub("(#00)+([ ]*)$","",tekst) # remove filler
+      x <- sub("(#00)+([ ]*)$","",text) # remove filler
       if (substr(x,1,3) == 'raw') {
         x <- substr(x,4,nchar(x))
         x <- unlist(purrr::map(threebythree(x),~chci(substr(.,2,3))))
@@ -246,35 +246,35 @@ xcode <- function (tekst, key='1VerySecretPasword', dir = c('e','d'), trans = "c
     x
   }
 
-  vigenere <- function (tekst, dir = 'e') {
-    if (dir == 'e') {
+  vigenere <- function (text, ed = 'e') {
+    if (ed == 'e') {
       mult = 1
     } else {
       mult = -1
     }
-    x <- strsplit(tekst, '')[[1]]
-    x <- tonum[x] # indexes of tekst
+    x <- strsplit(text, '')[[1]]
+    x <- tonum[x] # indexes of text
     x <- x + rep_len(tonum, length(x)) * mult
     x <- toalf[1 + ((x - 1) %% 64)]
     paste(x, collapse = '')
   }
 
-  vig_cum <- function (tekst, dir = 'e') {
-    if (dir == 'e') {
+  vig_cum <- function (text, ed = 'e') {
+    if (ed == 'e') {
       mult = 1
     } else {
       mult = -1
     }
-    x  <- strsplit(tekst, '')[[1]]
+    x  <- strsplit(text, '')[[1]]
     x  <- tonum[x]
     c1 <- tonum[1]
     for (i in seq(1, length(x))) {
       t <- x[i] + c1 * mult
-      if (dir == 'd') {
+      if (ed == 'd') {
         c1   <- x[i]
       }
       x[i] <- 1 + ((t - 1) %% 64)
-      if (dir == 'e') {
+      if (ed == 'e') {
         c1   <- x[i]
       }
     }
@@ -282,42 +282,42 @@ xcode <- function (tekst, key='1VerySecretPasword', dir = c('e','d'), trans = "c
     paste(x, collapse = '')
   }
 
-  shuffle <- function (tekst) {
-    n  <- nchar(tekst)
+  shuffle <- function (text) {
+    n  <- nchar(text)
     p1 <- seq(1, n, 2)
     p2 <- rev(seq(2, n, 2))
     m  <- matrix(c(p1, p2), nrow = 2, byrow = T)
     m  <- as.numeric(m)
-    paste(substring(tekst, m, m), collapse = '')
+    paste(substring(text, m, m), collapse = '')
   }
 
-  flip <- function (tekst) {
-    stringi::stri_reverse(tekst)
+  flip <- function (text) {
+    stringi::stri_reverse(text)
   }
 
-  dotrans <- function (tekst, type, dir) {
+  dotrans <- function (text, type, ed) {
     switch(
       type,
       'e' = {
-        tekst <- endecode(tekst, dir)
+        text <- endecode(text, ed)
       },
       's' = {
-        tekst <- shuffle(tekst)
+        text <- shuffle(text)
       },
       'f' = {
-        tekst <- flip(tekst)
+        text <- flip(text)
       },
       'c' = {
-        tekst <- vig_cum(tekst, dir)
+        text <- vig_cum(text, ed)
       },
       'v' = {
-        tekst <- vigenere(tekst, dir)
+        text <- vigenere(text, ed)
       },
       'p' = {
-        tekst <- playfair(tekst, dir)
+        text <- playfair(text, ed)
       },
       'a' = {
-        tekst <- aes_proc(tekst, dir)
+        text <- aes_proc(text, ed)
       },
       stop("Invalid `x` value")
     )
@@ -328,12 +328,12 @@ xcode <- function (tekst, key='1VerySecretPasword', dir = c('e','d'), trans = "c
   if (noe == FALSE) {
     trans = paste("e", trans, sep = "")
   }
-  if (dir != 'e') {
+  if (ed != 'e') {
     trans =  stringi::stri_reverse(trans)
   }
-  x = tekst
+  x = text
   for (t in unlist(strsplit(trans, ''))) {
-    x = dotrans(x, t, dir = dir)
+    x = dotrans(x, t, ed = ed)
   }
   x
 }

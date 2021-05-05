@@ -29,7 +29,7 @@ read_enc_file <- function (filename,decode=T,key="My9Key",trans="cfcvp") {
   x <- readLines(filename,warn=F)
   x <- paste(x,collapse='\n')
   if (decode == T) {
-    x <-  xcode (x,dir='d',key=key,trans=trans)
+    x <-  xcode (x,ed='d',key=key,trans=trans)
   }
   x
 }
@@ -40,7 +40,7 @@ read_enc_file <- function (filename,decode=T,key="My9Key",trans="cfcvp") {
 write_enc_file <- function (text, filename,encode=T,key="My9Key",trans="cfcvp") {
   x <- paste(text,collapse='\n')
   if (encode == T) {
-    x <-  xcode (x,dir='e',key=key,trans=trans)
+    x <-  xcode (x,ed='e',key=key,trans=trans)
   }
   writeLines(x,filename,sep='')
 }
@@ -58,7 +58,7 @@ read_enc_binfile <- function (filename,decode=T,key="My9Key",trans="cfcvp",bufsi
   }
   close(f1)
   if (decode == T) {
-    x <-  xcode (rawToChar(x),dir='d',key=key,trans=trans)
+    x <-  xcode (rawToChar(x),ed='d',key=key,trans=trans)
   }
   if (raw2char == T) {
     x <- rawToChar(x)
@@ -77,7 +77,7 @@ write_enc_binfile <- function (text, filename,encode=T,key="My9Key",trans="cfcvp
     x <- text
   }
   if (encode == T) {
-    x <-  xcode (x,dir='e',key=key,trans=trans)
+    x <-  xcode (x,ed='e',key=key,trans=trans)
   }
   writeBin(x,f1)
   close(f1)

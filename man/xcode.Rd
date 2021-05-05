@@ -5,21 +5,21 @@
 \title{Encrypt or decrypt character string}
 \usage{
 xcode(
-  tekst,
+  text,
   key = "1VerySecretPasword",
-  dir = c("e", "d"),
+  ed = c("e", "d"),
   trans = "cfcvp",
   noe = FALSE
 )
 }
 \arguments{
-\item{tekst}{Character string or raw vector to encrypt or character string to decrypt}
+\item{text}{Character string or raw vector to encrypt or character string to decrypt}
 
 \item{key}{Character string with encryption/decryption key.
 Only the letters (in upper or lower case), digits, the character \verb{#}
 and the space are allowed in this key}
 
-\item{dir}{Character (\code{'e'} or \code{'d'} or their upper case versions) that specifies direction:
+\item{ed}{Character (\code{'e'} or \code{'d'} or their upper case versions) that specifies what to do:
 \code{'e'} is encrypt, \code{'d'} is decrypt}
 
 \item{trans}{Character string with encrypt/decrypt operations. See \strong{Details}}
@@ -28,8 +28,8 @@ and the space are allowed in this key}
 should be used. See \strong{Details}}
 }
 \value{
-a character string with the encrypted result when \code{dir == 'e'} or
-the decrypted result when \code{dir == 'd'}
+a character string with the encrypted result when \code{ed == 'e'} or
+the decrypted result when \code{ed == 'd'}
 }
 \description{
 Encrypt or decrypt character string
@@ -66,9 +66,9 @@ and from then on based on the result for the preceding character.
 \examples{
 \dontrun{
 my_key <- 'Mysecret123'
-(s <- xcode('my message!',my_key,dir='e'))
+(s <- xcode('my message!',my_key,ed='e'))
 # [1] "8Ge8D3F4Mh1s6q z"
-xcode(s,my_key,dir='d')
+xcode(s,my_key,ed='d')
 # [1] "my message!"
 }
 }
