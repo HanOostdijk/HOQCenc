@@ -2,26 +2,43 @@
 % Please edit documentation in R/enc_file.R
 \name{enc_file}
 \alias{enc_file}
-\alias{read_enc_file}
-\alias{write_enc_file}
+\alias{read_enc_ascfile}
+\alias{write_enc_ascfile}
 \alias{read_enc_binfile}
 \alias{write_enc_binfile}
 \title{Read and write encrypted files}
 \usage{
-read_enc_file(filename, decode = T, key = "My9Key", trans = "cfcvp")
+read_enc_ascfile(
+  filename,
+  decode = T,
+  key = "1VerySecretPasword",
+  trans = "cfcvp"
+)
 
-write_enc_file(text, filename, encode = T, key = "My9Key", trans = "cfcvp")
+write_enc_ascfile(
+  text,
+  filename,
+  encode = T,
+  key = "1VerySecretPasword",
+  trans = "cfcvp"
+)
 
 read_enc_binfile(
   filename,
   decode = T,
-  key = "My9Key",
+  key = "1VerySecretPasword",
   trans = "cfcvp",
   bufsize = 2000,
   raw2char = F
 )
 
-write_enc_binfile(text, filename, encode = T, key = "My9Key", trans = "cfcvp")
+write_enc_binfile(
+  text,
+  filename,
+  encode = T,
+  key = "1VerySecretPasword",
+  trans = "cfcvp"
+)
 }
 \arguments{
 \item{filename}{a \code{\link[=connection]{connection()}} object or a character string for use in \code{\link[=readLines]{readLines()}} or \code{\link[=writeLines]{writeLines()}}}
@@ -41,17 +58,17 @@ write_enc_binfile(text, filename, encode = T, key = "My9Key", trans = "cfcvp")
 \item{raw2char}{Logical scalar indicating if \code{rawToChar} conversion should be done in \code{read_enc_binfile}}
 }
 \value{
-Character string with the data read in case of the \code{read_enc_file} function otherwise \code{NULL}.
+Character string with the data read in case of the \code{read_enc_ascfile} function otherwise \code{NULL}.
 }
 \description{
 Read and write encrypted files
 }
 \examples{
 \dontrun{
-han<- write_enc_file("han",'mycoded.txt')
-read_enc_file('mycoded.txt',decode = FALSE)
+han<- write_enc_ascfile("han",'mycoded.txt')
+read_enc_ascfile('mycoded.txt',decode = FALSE)
 # [1] "L7Gq 63aiI7x92kx"
-read_enc_file('mycoded.txt',decode = TRUE)
+read_enc_ascfile('mycoded.txt',decode = TRUE)
 # [1] "han"
 }
 

@@ -1,13 +1,13 @@
 test_that("enc_file tests ", {
 
 tekst     <- "This is a 21st century example of an English text."
-tekst2    <- "Roi3WahvYtyWzyXUba3J9xAgtaf0nTZbf3Nxr4kI8iL2Pfoh HqEEJV9fmMQfJzs"
+tekst2    <- "iFLbqk9MTET mpNazXQsSBBJLgPEU3LF1J5iuesj9#dMJsf7aTtkp32Slzk6Tfno"
 
 tekstraw  <- charToRaw(tekst)
 tekstraw2 <- paste(
-              "4ElK3kDV1KwWgTfNdXz92HCoMEF2#jE7fG0cVQBBPbF5g2oaZUuqa9KefJYiIbsEcuaTmiMNd" ,
-              "7UJNuM712X#ycmEteOdDlPn5TChz#rWTPJLNYeqBZw3Ig5NztpmAR3qWx UxqnsBFZauNXdTiY" ,
-              "Ld#FrG1LBBz6B",
+       "LwCx7#VrahgD2rlUPByFMuY5CSVmBOSAZmWsDSIVOLXvu9O W6 S",
+       "aJCYfTyTgcq6Ia#3xFJhlsjuJxmvudlg389JMEyNmt90QDHTUriD",
+       "2pmQDMPwDxgmzMO7mD i3iVZX2LZWVcBZlXB5T1tVNW8nxIc1UtpVOVi",
               sep=""
               )
 
@@ -15,17 +15,17 @@ tekstraw2 <- paste(
 tfile <- tempfile(pattern = "file", tmpdir = tempdir(), fileext = ".txt")
 
 # write and read without en- and de-coding
-d1 <- write_enc_file(tekst,tfile,encode=F)
+d1 <- write_enc_ascfile(tekst,tfile,encode=F)
 expect_true(is.null(d1))
-t1 <- read_enc_file(tfile,decode=F)
+t1 <- read_enc_ascfile(tfile,decode=F)
 expect_equal(t1,tekst)
 
 # write with encoding, read without decoding
-d1 <- write_enc_file(tekst,tfile,encode=T)
-t1 <- read_enc_file(tfile,decode=F)
+d1 <- write_enc_ascfile(tekst,tfile,encode=T)
+t1 <- read_enc_ascfile(tfile,decode=F)
 expect_equal(t1,tekst2)
 # write and read with encoding resp. decoding
-t2 <- read_enc_file(tfile,decode=T)
+t2 <- read_enc_ascfile(tfile,decode=T)
 expect_equal(t2,tekst)
 
 # binary character write and read without en- and de-coding

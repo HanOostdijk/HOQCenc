@@ -13,19 +13,20 @@ NULL
 #' @param trans Character string with the transformations to be done by the [xcode()] function#'
 #' @param bufsize Integer indicating the buffersize to be used for `read_enc_binfile`
 #' @param raw2char Logical scalar indicating if `rawToChar` conversion should be done in `read_enc_binfile`
-#' @return Character string with the data read in case of the `read_enc_file` function otherwise `NULL`.
+#' @return Character string with the data read in case of the `read_enc_ascfile` function otherwise `NULL`.
 #' @export
 #' @rdname enc_file
 #' @examples
 #' \dontrun{
-#' han<- write_enc_file("han",'mycoded.txt')
-#' read_enc_file('mycoded.txt',decode = FALSE)
+#' han<- write_enc_ascfile("han",'mycoded.txt')
+#' read_enc_ascfile('mycoded.txt',decode = FALSE)
 #' # [1] "L7Gq 63aiI7x92kx"
-#' read_enc_file('mycoded.txt',decode = TRUE)
+#' read_enc_ascfile('mycoded.txt',decode = TRUE)
 #' # [1] "han"
 #' }
 #'
-read_enc_file <- function (filename,decode=T,key="My9Key",trans="cfcvp") {
+read_enc_ascfile <- function (filename,decode=T,key='1VerySecretPasword',
+                           trans="cfcvp") {
   x <- readLines(filename,warn=F)
   x <- paste(x,collapse='\n')
   if (decode == T) {
@@ -37,7 +38,8 @@ read_enc_file <- function (filename,decode=T,key="My9Key",trans="cfcvp") {
 #' @export
 #' @rdname enc_file
 #'
-write_enc_file <- function (text, filename,encode=T,key="My9Key",trans="cfcvp") {
+write_enc_ascfile <- function (text, filename,encode=T,key='1VerySecretPasword',
+                            trans="cfcvp") {
   x <- paste(text,collapse='\n')
   if (encode == T) {
     x <-  xcode (x,ed='e',key=key,trans=trans)
@@ -47,7 +49,8 @@ write_enc_file <- function (text, filename,encode=T,key="My9Key",trans="cfcvp") 
 #' @export
 #' @rdname enc_file
 #'
-read_enc_binfile <- function (filename,decode=T,key="My9Key",trans="cfcvp",bufsize=2000,raw2char=F) {
+read_enc_binfile <- function (filename,decode=T,key='1VerySecretPasword',
+                              trans="cfcvp",bufsize=2000,raw2char=F) {
   f1 <- file(filename,open="rb")
   neof <- T
   x <-raw()
@@ -69,7 +72,8 @@ read_enc_binfile <- function (filename,decode=T,key="My9Key",trans="cfcvp",bufsi
 #' @export
 #' @rdname enc_file
 #'
-write_enc_binfile <- function (text, filename,encode=T,key="My9Key",trans="cfcvp") {
+write_enc_binfile <- function (text, filename,encode=T,key='1VerySecretPasword',
+                               trans="cfcvp") {
   f1 <- file(filename,open="wb")
   if (inherits(text,"character")){
     x <- paste(text,collapse='\n')
