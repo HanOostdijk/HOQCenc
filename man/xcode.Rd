@@ -61,6 +61,7 @@ based on the position of the x-th character in the ordered set.
 and from then on based on the result for the preceding character.
 \item p : a Playfair translation based on an 8x8 square filled with the ordered set
 \item a : an AES translation based on the key. This is in fact the \code{\link[digest:AES]{digest::AES()}} function with \code{mode='ECB'}
+\item h : a Hill linear transformation based on the key. This handles 4 consecutive characters
 }
 }
 \examples{

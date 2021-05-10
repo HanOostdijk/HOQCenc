@@ -41,6 +41,7 @@
 #' and from then on based on the result for the preceding character.
 #' - p : a Playfair translation based on an 8x8 square filled with the ordered set
 #' - a : an AES translation based on the key. This is in fact the [digest::AES()] function with `mode='ECB'`
+#' - h : a Hill linear transformation based on the key. This handles 4 consecutive characters
 #'
 #' @examples
 #' \dontrun{
@@ -56,14 +57,8 @@ xcode <- function (text, key='1VerySecretPasword', ed = c('e','d'), trans = "cfc
   ed <- tolower(ed)
   ed <- match.arg(ed)
 
-  twobytwo <- function (text) {
-    text <- matrix(unlist(strsplit(text, '')), ncol = 2, byrow = T)
-    apply(text, 1, function(x)
-      paste(x, collapse = ''))
-  }
-
-  threebythree <- function (text) {
-    text <- matrix(unlist(strsplit(text, '')), ncol = 3, byrow = T)
+  nbyn <- function (text,n) {
+    text <- matrix(unlist(strsplit(text, '')), ncol = n, byrow = T)
     apply(text, 1, function(x)
       paste(x, collapse = ''))
   }
@@ -103,8 +98,24 @@ xcode <- function (text, key='1VerySecretPasword', ed = c('e','d'), trans = "cfc
 
   chci <- function (x) {
     # convert hex to raw
-     x <- purrr::map_dbl(twobytwo(x),~strtoi(.,16L))
+     x <- purrr::map_dbl(nbyn(x,2),~strtoi(.,16L))
      as.raw(x)
+  }
+
+
+  hill_proc <- function (text, ed = 'e') { # Lester S. Hill
+    if (ed == 'e') {
+      m  <- matrix( data = c(1, 2, 3, 1, 0, 1, 2, 1, 3, 1, 1, 1, 0, 1, 3, 3),
+                       nrow = 4, byrow = T )
+    } else {
+      m  <- matrix( data = c(-2, 4, 1, -1, 9, -18, -3, 4, -6, 13, 2,-3, 3, -7, -1, 2),
+                       nrow = 4, byrow = T )
+    }
+    x <- purrr::map(nbyn(text,4), function (x) {
+      d <- purrr::map_dbl(unlist(strsplit(x,'')),~tonum[.]-1)
+      paste(toalf[1+(m %*% d) %% 64],collapse='')
+      })
+    paste(x,collapse='')
   }
 
   aes_proc <- function(text,ed = 'e') {
@@ -177,7 +188,7 @@ xcode <- function (text, key='1VerySecretPasword', ed = c('e','d'), trans = "cfc
        )
     }
 
-    text <- twobytwo(text)
+    text <- nbyn(text,2)
     text <- purrr::map_chr(text,  ~ playfair_pair(., tonum, toalf, ed))
     text <- paste(text, collapse = '')
     text
@@ -236,7 +247,7 @@ xcode <- function (text, key='1VerySecretPasword', ed = c('e','d'), trans = "cfc
       x <- sub("(#00)+([ ]*)$","",text) # remove filler
       if (substr(x,1,3) == 'raw') {
         x <- substr(x,4,nchar(x))
-        x <- unlist(purrr::map(threebythree(x),~chci(substr(.,2,3))))
+        x <- unlist(purrr::map(nbyn(x,3),~chci(substr(.,2,3))))
       } else {
         x <- strsplit(x, '#')[[1]]
         x <- purrr::imap(x, decode1)
@@ -318,6 +329,9 @@ xcode <- function (text, key='1VerySecretPasword', ed = c('e','d'), trans = "cfc
       },
       'a' = {
         text <- aes_proc(text, ed)
+      },
+      'h' = {
+        text <- hill_proc(text, ed)
       },
       stop("Invalid `x` value")
     )
