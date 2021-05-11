@@ -183,3 +183,16 @@ test_that("check for a operand (AES) ", {
 
 })
 
+
+test_that("check for h operand (Hill) ", {
+
+  key <- "abcdefghijklmnop"
+  x <- 'This is a message1'
+  y <- "LPOvcQs4KAoU8yoKFN0ocBd3cBKnuUmO"
+
+  expect_equal(xcode(x,key,ed='e',trans='h'),y)
+  expect_equal(xcode(y,key,ed='d',trans='h'),x)
+
+})
+
+

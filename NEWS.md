@@ -1,3 +1,8 @@
+# HOQCenc 0.0.1
+
+* Operations e, s, f, v, c, p, a, h added to `xcode`.
+* Read and write functions added
+
 # HOQCenc 0.0.0.9000
 
-* Added a `NEWS.md` file to track changes to the package.
+* Initial version.

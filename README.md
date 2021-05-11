@@ -1,7 +1,7 @@
 HOQCenc
 ================
 Han Oostdijk,
-6 May 2021
+11May2021
 
 -   [Installation](#installation)
 -   [Example](#example)
@@ -14,6 +14,7 @@ Han Oostdijk,
     -   [The `v` operation](#the-v-operation)
     -   [The `c` operation](#the-c-operation)
     -   [The `a` operation](#the-a-operation)
+    -   [The `h` operation](#the-h-operation)
     -   [Encrypting raw vectors](#encrypting-raw-vectors)
 -   [Reading and writing files](#reading-and-writing-files)
 
@@ -115,6 +116,7 @@ performed):
     ordered set (as show above)
 -   a : an AES translation based on the key. This is in fact the
     \[digest::AES()\] function with `mode='ECB'`
+-   h : a Hill linear transformation based on the key.
 
 The encryption characteristics of these operations are the following:
 
@@ -132,6 +134,7 @@ The encryption characteristics of these operations are the following:
     than once, it is encrypted the same each time
 -   a : When a 16-character block occurs more than once, it is encrypted
     the same each time.
+-   h : This handles 4 consecutive characters
 
 So it is advised to combine several options as e.g. done in the example
 below
@@ -314,6 +317,30 @@ xcode('0123456789abcdee',key='abc',ed='e',trans='a',noe=T)
 
 xcode('0123456789abcdef0123456789abcdef',key='abc',ed='e',trans='a',noe=T)
 #> [1] "747f22502381a3fb7eb0cb42cb5f6612747f22502381a3fb7eb0cb42cb5f6612"
+```
+
+### The `h` operation
+
+The `h` uses the `Hill` transformation. The method works in blocks of 4
+characters: blocks that are identical with the exception of one
+character will be encrypted to very unrelated results. Each character is
+transformed to its rank in the ordered set. A linear transformation is
+then done on these four numbers by applying a matrix multiplication and
+the resulting numbers (modulo 64) are used as rank numbers in the
+ordered set to determine the four output characters. The matrix used is
+a fixed matrix. The examples show (again) that it is necessary to
+combine this operation with other ones to make it more safe.
+
+``` r
+xcode('0123456789abcdef',key='abc',ed='e',trans='h',noe=T)
+#> [1] "3y 8tOwy3 YazqsE"
+xcode('1123456789abcdef',key='abc',ed='e',trans='h',noe=T)
+#> [1] "4yb8tOwy3 YazqsE"
+xcode('0123456789abcdee',key='abc',ed='e',trans='h',noe=T)
+#> [1] "3y 8tOwy3 YayprB"
+
+xcode('0123456789abcdef0123456789abcdef',key='abc',ed='e',trans='h',noe=T)
+#> [1] "3y 8tOwy3 YazqsE3y 8tOwy3 YazqsE"
 ```
 
 ### Encrypting raw vectors

@@ -39,7 +39,7 @@
 #' based on the position of the x-th character in the ordered set.
 #' - c : a Vigenère translation based on the first character of the ordered set for the first character
 #' and from then on based on the result for the preceding character.
-#' - p : a Playfair translation based on an 8x8 square filled with the ordered set
+#' - p : a Playfair translation based on an 8x8 square filled with the ordered set. This handles 2 consecutive characters
 #' - a : an AES translation based on the key. This is in fact the [digest::AES()] function with `mode='ECB'`
 #' - h : a Hill linear transformation based on the key. This handles 4 consecutive characters
 #'
@@ -113,7 +113,7 @@ xcode <- function (text, key='1VerySecretPasword', ed = c('e','d'), trans = "cfc
     }
     x <- purrr::map(nbyn(text,4), function (x) {
       d <- purrr::map_dbl(unlist(strsplit(x,'')),~tonum[.]-1)
-      paste(toalf[1+(m %*% d) %% 64],collapse='')
+      paste(toalf[1+((m %*% d) %% 64)],collapse='')
       })
     paste(x,collapse='')
   }

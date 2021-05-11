@@ -59,7 +59,7 @@ and ensure that the length of the resulting string is a multiple of 16
 based on the position of the x-th character in the ordered set.
 \item c : a Vigenère translation based on the first character of the ordered set for the first character
 and from then on based on the result for the preceding character.
-\item p : a Playfair translation based on an 8x8 square filled with the ordered set
+\item p : a Playfair translation based on an 8x8 square filled with the ordered set. This handles 2 consecutive characters
 \item a : an AES translation based on the key. This is in fact the \code{\link[digest:AES]{digest::AES()}} function with \code{mode='ECB'}
 \item h : a Hill linear transformation based on the key. This handles 4 consecutive characters
 }

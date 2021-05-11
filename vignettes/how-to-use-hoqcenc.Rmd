@@ -83,6 +83,7 @@ based on the position of the x-th character in the ordered set.
 and from then on based on the result for the preceding character.
 - p : a Playfair translation based on an 8x8 square filled with the ordered set (as show above)
 - a : an AES translation based on the key. This is in fact the [digest::AES()] function with `mode='ECB'`
+- h : a Hill linear transformation based on the key. 
 
 The encryption characteristics of these operations are the following:
 
@@ -95,6 +96,7 @@ to difference in later results. Always combine with `v`, `p` or `a` operations
 - p : pairwise encryption with strength better when the number of unique characters in the key is greater.
 When a pair occurs more than once, it is encrypted the same each time
 - a : When a 16-character block occurs more than once, it is encrypted the same each time.
+- h : This handles 4 consecutive characters
 
 So it is advised to combine several options as e.g. done in the example below
 
@@ -202,6 +204,17 @@ xcode('1123456789abcdef',key='abc',ed='e',trans='a',noe=T)
 xcode('0123456789abcdee',key='abc',ed='e',trans='a',noe=T)
 
 xcode('0123456789abcdef0123456789abcdef',key='abc',ed='e',trans='a',noe=T)
+```
+
+### The `h` operation
+The `h` uses the `Hill` transformation. The method works in blocks of 4 characters: blocks that are identical with the exception of one character will be encrypted to very unrelated results. Each character is transformed to its rank in the ordered set. A linear transformation is then done on these four numbers by applying a matrix multiplication and the resulting numbers (modulo 64) are used as rank numbers in the ordered set to determine the four output characters. The matrix used is a fixed matrix. The examples show (again) that it is necessary to combine this operation with other ones to make it more safe. 
+
+```{r}
+xcode('0123456789abcdef',key='abc',ed='e',trans='h',noe=T)
+xcode('1123456789abcdef',key='abc',ed='e',trans='h',noe=T)
+xcode('0123456789abcdee',key='abc',ed='e',trans='h',noe=T)
+
+xcode('0123456789abcdef0123456789abcdef',key='abc',ed='e',trans='h',noe=T)
 ```
 
 ### Encrypting raw vectors
