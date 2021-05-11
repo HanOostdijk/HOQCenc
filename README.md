@@ -35,7 +35,7 @@ You can install this version from GitHub with:
 
 ``` r
 # install.packages("devtools")
-devtools::install_github("HanOostdijk/HOQCenc") 
+devtools::install_github("HanOostdijk/HOQCenc",build_vignettes=TRUE) 
 ```
 
 ## Example
