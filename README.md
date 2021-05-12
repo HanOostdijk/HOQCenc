@@ -1,7 +1,7 @@
 HOQCenc
 ================
 Han Oostdijk,
-11May2021
+12May2021
 
 -   [Installation](#installation)
 -   [Example](#example)
@@ -251,7 +251,7 @@ xcode("hueiimg8",key='',ed='d',trans='p',noe=T)
 
 The `s` (shuffle) operation shuffles the characters in such a way that
 `0123456789abcdef` is translated to `0f2d4b6987a5c3e1` and the `f`
-operations (flip) flips the characters in such a way that
+(flip) operation flips the characters in such a way that
 `0123456789abcdef` is translated to `fedcba9876543210`.
 
 ``` r

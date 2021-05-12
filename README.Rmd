@@ -176,7 +176,7 @@ xcode("hueiimg8",key='',ed='d',trans='p',noe=T)
 ```
 
 ### The `s` and `f` operations
-The `s` (shuffle) operation shuffles the characters in such a way that `0123456789abcdef` is translated to `0f2d4b6987a5c3e1` and the `f` operations (flip) flips the characters in such a way that `0123456789abcdef` is translated to `fedcba9876543210`. 
+The `s` (shuffle) operation shuffles the characters in such a way that `0123456789abcdef` is translated to `0f2d4b6987a5c3e1` and the `f` (flip) operation flips the characters in such a way that `0123456789abcdef` is translated to `fedcba9876543210`. 
 
 ```{r}
 xcode('0123456789abcdef',key='',ed='e',trans='s',noe=T)
