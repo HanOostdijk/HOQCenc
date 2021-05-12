@@ -59,7 +59,7 @@ message2 <- "Line 1 of a two-line message.\nAs expected a second line."
 
 (s <- xcode(message1,key=key,ed='e',trans='cscvp')) # encrypt message1
 #> [1] "tSCLY5l2X4eM81f8Q7D3 gbmK9#hRSCtD5VC4M9CpH2LxQqGKKl4oHoKqc3dqOOT"
-xcode(s,key=key,ed='d',trans='cscvp')               # show result of encryption
+xcode(s,key=key,ed='d',trans='cscvp')               # show result of decryption
 #> [1] "Line 1 of a two-line message!\nAs expected a second line."
 xcode(message2,key=key,ed='e',trans='cscvp')        # encrypt message2
 #> [1] "iixEWSv881hYenne#d9VnDEMEowLfD1HrwHyAiHK4qzwbwtneecPdwg1k1OioMOT"

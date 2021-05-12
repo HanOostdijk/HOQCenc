@@ -46,7 +46,7 @@ message1 <- "Line 1 of a two-line message!\nAs expected a second line."
 message2 <- "Line 1 of a two-line message.\nAs expected a second line." 
 
 (s <- xcode(message1,key=key,ed='e',trans='cscvp')) # encrypt message1
-xcode(s,key=key,ed='d',trans='cscvp')               # show result of encryption
+xcode(s,key=key,ed='d',trans='cscvp')               # show result of decryption
 xcode(message2,key=key,ed='e',trans='cscvp')        # encrypt message2
 ```
  
